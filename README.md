@@ -18,8 +18,12 @@ Scroll down to the Content section, and follow the instructions to create a Twit
 
 Download the .zip file from Twitter, and unzip it into a folder called "dotw" in your home directory (i.e. /Users/kitykity/dotw).
 
-Copy the dotw.bash script from this page into the "dotw" folder.
+Copy the dotw.bash listed above into the directory called dotw that you made earlier.
 
-Make it executable, and run it ( ./dotw.bash ).
+$ cd /Users/fred/dotw
 
-Enjoy!
+$ chmod 700 dotw.bash
+
+$ ./dotw.bash
+
+That's it! Enjoy!
