@@ -17,3 +17,9 @@ Click on your avatar in the top right, and click Settings.
 Scroll down to the Content section, and follow the instructions to create a Twitter archive.
 
 Download the .zip file from Twitter, and unzip it into a folder called "dotw" in your home directory (i.e. /Users/kitykity/dotw).
+
+Copy the dotw.bash script from this page into the "dotw" folder.
+
+Make it executable, and run it ( ./dotw.bash ).
+
+Enjoy!
