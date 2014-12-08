@@ -62,11 +62,11 @@ postPopper () {
     printf "\nFilename: ${fileName}\n"
     printf "Post Date: ${postDateTimeForDayOne}\n"
     printf "${postText}\n"
-    printf "${postTextComplete}" | /usr/local/bin/dayone -d="${postDateTimeForDayOne}" new
+    printf "${postTextComplete}" | /usr/local/bin/dayone -d="${postDateTimeForDayOne}" new > /dev/null
     shortName=`echo ${fileName} | tr '/' '\n' | tail -1`
     mv ${fileName} ${thisDir}/dotwPosts/done.${shortName}
     printf "`ls ${thisDir}/dotwPosts/p* | wc -l` posts left to import.\n"
-    sleep 5
+    sleep 4
     # printf "Hit Enter for the next one... " ; read m
   done
 }
