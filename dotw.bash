@@ -43,6 +43,10 @@ makePostFiles () {
 postPopper () {
   rm "${thisDir}/dotwPosts/post." "${thisDir}/dotwPosts/post.0" 2> /dev/null #Garbage file
   for fileName in `ls ${thisDir}/dotwPosts/p*` ; do
+    postMedia=""
+    postMediaUrl=""
+    postMediaFilename=""
+    postTags=""
     postDT=`grep "created_at" ${fileName} | cut -d"\"" -f4`
     postYear=`echo ${postDT} | cut -d" " -f6`
     postMonthWord=`echo ${postDT} | cut -d" " -f2`
@@ -74,36 +78,35 @@ postPopper () {
       postTitle="Twitter Post \@ ${postHour}\:${postMinute}" 
 #    fi
 
-    postID=`grep "\"id\"" ${fileName} | head -1 | sed 's/"id" : //' | sed 's/\,//'`
-    postUrl=`grep "expanded_url" ${fileName} | head -1 | cut -d"\"" -f4`
-    #postText=`grep "\"text\"" ${fileName} | sed 's/\"text\" \: \"//' | sed 's/\"\,$//' | sed 's/^/#/'`
+    postId=`cat ${fileName} | sed -n '/favorite_/,$p' | sed -n "/favorited\"/q;p" | grep "id\"" | tail -2 | head -1 | cut -d"\"" -f4`
+    postUrl="https://twitter.com/${twitterUsername}/status/${postId}"
     postFullText=`grep "\"full_text\"" ${fileName} | cut -d"\"" -f4 | sed 's/\"\,$//'`
-    postTextComplete="${postTitle}\n\n${postFullText}\n${postText}\n<${postUrl}>\n"
+    postTextComplete="${postTitle}\n\n${postFullText}\n${postText}\n\n<${postUrl}>\n"
     postDateTimeForDayOne="${postMonth}/${postDay}/${postYear} ${postHour}:${postMinute}${postAMPM}"
     printf "\nFilename: ${fileName}\n"
     postMediaUrl=`grep "media_url\"" ${fileName} | head -1 | cut -d"\"" -f4`
-    postMedia=`basename ${postMediaUrl}`
-    postMediaFilename=`find ${thisDir}/twitter/tweet_media -name "*${postMedia}" | egrep "jpg|png|gif"`
+    if [ "${postMediaUrl}" != "" ] ; then
+      postMedia=`basename ${postMediaUrl}`
+      postMediaFilename=`find ${thisDir}/twitter/tweet_media -name "*${postMedia}" | egrep "jpg|png|gif"`
+    fi
     postTags=`grep "\"text\"" ${fileName} | cut -d":" -f2 | cut -d"\"" -f2 | sed 's/$/ /' | tr -d '\n' | sed 's/$/\ /'`
-    #echo "postTags: ${postTags}"
     printf "Post Date: ${postDateTimeForDayOne}\n"
-    printf "${postText}\n"
     if [ "${postMedia}" != "" ] ; then
       if [ "${postTags}" != "" ] ; then
-        printf "${postTextComplete}" | /usr/local/bin/dayone2 -t ${postTags} -p ${postMediaFilename} -d="${postDateTimeForDayOne}" new 
+        printf "${postTextComplete}" | /usr/local/bin/dayone2 -t twitter ${postTags} -p ${postMediaFilename} -d="${postDateTimeForDayOne}" new 
        else
-        printf "${postTextComplete}" | /usr/local/bin/dayone2 -p ${postMediaFilename} -d="${postDateTimeForDayOne}" new 
+        printf "${postTextComplete}" | /usr/local/bin/dayone2 -p ${postMediaFilename} -t twitter -d="${postDateTimeForDayOne}" new 
       fi
      else
-      if [ ${postTags} != "" ] ; then
-        printf "${postTextComplete}" | /usr/local/bin/dayone2 -t ${postTags} -d="${postDateTimeForDayOne}" new
+      if [ "${postTags}" != "" ] ; then
+        printf "${postTextComplete}" | /usr/local/bin/dayone2 -t twitter ${postTags} -d="${postDateTimeForDayOne}" new
        else
-        printf "${postTextComplete}" | /usr/local/bin/dayone2 -d="${postDateTimeForDayOne}" new
+        printf "${postTextComplete}" | /usr/local/bin/dayone2 -t twitter -d="${postDateTimeForDayOne}" new
       fi
     fi
     shortName=`echo ${fileName} | tr '/' '\n' | tail -1`
     mv ${fileName} ${thisDir}/dotwPosts/done.${shortName}
-#    printf "`ls ${thisDir}/dotwPosts/p* | wc -l` posts left to import.\n"
+    printf "`ls ${thisDir}/dotwPosts/p* | wc -l` posts left to import.\n"
 #    sleep 5
     printf "Hit Enter for the next one... " ; read m
   done
