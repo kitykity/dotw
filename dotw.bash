@@ -36,7 +36,7 @@ makePostFiles () {
        else
         echo ${thisLine} >> ${thisDir}/dotwPosts/post.${fileNumPadded}
       fi
-  done < ${thisDir}/tweet.js
+  done < ${thisDir}/twitter/data/tweet.js
   printf "\n"
 }
 
